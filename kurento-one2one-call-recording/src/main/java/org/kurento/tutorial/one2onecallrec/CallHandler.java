@@ -64,27 +64,33 @@ public class CallHandler extends TextWebSocketHandler {
     JsonObject jsonMessage = gson.fromJson(message.getPayload(), JsonObject.class);
     UserSession user = registry.getBySession(session);
 
+
     if (user != null) {
-      log.debug("Incoming message from user '{}': {}", user.getName(), jsonMessage);
+      log.info("Incoming message from user '{}': {}", user.getName(), jsonMessage);
     } else {
-      log.debug("Incoming message from new user: {}", jsonMessage);
+      log.info("Incoming message from new user: {}", jsonMessage);
     }
 
     switch (jsonMessage.get("id").getAsString()) {
       case "register":
+        log.info("handleTextMessage in case `register` - session :{}, jsonMessage : {}  ", session, jsonMessage);
         register(session, jsonMessage);
         break;
       case "call":
+        log.info("handleTextMessage in case `call` - user >  {} , jsonMessage > {}", user, jsonMessage);
         call(user, jsonMessage);
         break;
       case "incomingCallResponse":
+        log.info("handleTextMessage in case `incomingCallResponse` - user > {} , jsonMessage : {}", user, jsonMessage);
         incomingCallResponse(user, jsonMessage);
         break;
       case "play":
+        log.info("handleTextMessage in case `play` - user >  {} , jsonMessage > {} ", user, jsonMessage);
         play(user, jsonMessage);
         break;
       case "onIceCandidate": {
         JsonObject candidate = jsonMessage.get("candidate").getAsJsonObject();
+        log.info("handleTextMessage in case `onIceCandidate` - user : {} , candidate: {} ", user, candidate);
 
         if (user != null) {
           IceCandidate cand =
@@ -131,6 +137,7 @@ public class CallHandler extends TextWebSocketHandler {
     JsonObject response = new JsonObject();
 
     if (registry.exists(to)) {
+      log.info("call function(1) from : {} to : {}", from, to);
       caller.setSdpOffer(jsonMessage.getAsJsonPrimitive("sdpOffer").getAsString());
       caller.setCallingTo(to);
 
@@ -141,6 +148,7 @@ public class CallHandler extends TextWebSocketHandler {
       callee.sendMessage(response);
       callee.setCallingFrom(from);
     } else {
+      log.info("call function(2) from : {} to : {}", from, to);
       response.addProperty("id", "callResponse");
       response.addProperty("response", "rejected");
       response.addProperty("message", "user '" + to + "' is not registered");
@@ -157,7 +165,7 @@ public class CallHandler extends TextWebSocketHandler {
     String to = calleer.getCallingTo();
 
     if ("accept".equals(callResponse)) {
-      log.debug("Accepted call from '{}' to '{}'", from, to);
+      log.info("Accepted call from '{}' to '{}'", from, to);
 
       CallMediaPipeline callMediaPipeline = new CallMediaPipeline(kurento, from, to);
       pipelines.put(calleer.getSessionId(), callMediaPipeline.getPipeline());
@@ -278,7 +286,7 @@ public class CallHandler extends TextWebSocketHandler {
 
   private void play(final UserSession session, JsonObject jsonMessage) throws IOException {
     String user = jsonMessage.get("user").getAsString();
-    log.debug("Playing recorded call of user '{}'", user);
+    log.info("Playing recorded call of user '{}'", user);
 
     JsonObject response = new JsonObject();
     response.addProperty("id", "playResponse");

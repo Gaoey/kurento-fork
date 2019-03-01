@@ -17,7 +17,6 @@
 	<description>WebRTC one to one video call with recording and filtering</description>
 
 	<!-- Project configuration -->
-
 	<properties>
 		<demo.port>8443</demo.port>
 		<start-class>org.kurento.tutorial.one2onecalladv.One2OneCallAdvApp</start-class>

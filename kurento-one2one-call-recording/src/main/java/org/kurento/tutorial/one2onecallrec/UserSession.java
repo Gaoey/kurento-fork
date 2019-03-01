@@ -85,11 +85,12 @@ public class UserSession {
   }
 
   public void setCallingFrom(String callingFrom) {
+    log.info("set calling from  '{}' to {}", name, callingFrom);
     this.callingFrom = callingFrom;
   }
 
   public void sendMessage(JsonObject message) throws IOException {
-    log.debug("Sending message from user '{}': {}", name, message);
+    log.info("Sending message from user '{}': {}", name, message);
     session.sendMessage(new TextMessage(message.toString()));
   }
 
@@ -99,7 +100,7 @@ public class UserSession {
 
   public void setWebRtcEndpoint(WebRtcEndpoint webRtcEndpoint) {
     this.webRtcEndpoint = webRtcEndpoint;
-
+    log.info("setWebRtcEndpoint from user: '{}' , webRtcEndpoint: {}", name, webRtcEndpoint);
     if (this.webRtcEndpoint != null) {
       for (IceCandidate e : candidateList) {
         this.webRtcEndpoint.addIceCandidate(e);
@@ -109,6 +110,7 @@ public class UserSession {
   }
 
   public void addCandidate(IceCandidate candidate) {
+    log.info("addCandidate from user: '{}' , candidate: {}", name, webRtcEndpoint);
     if (this.webRtcEndpoint != null) {
       this.webRtcEndpoint.addIceCandidate(candidate);
     } else {
@@ -125,6 +127,7 @@ public class UserSession {
   }
 
   public void setPlayingWebRtcEndpoint(WebRtcEndpoint playingWebRtcEndpoint) {
+    log.info("setPlayingWebRtcEndpoint from user: '{}' , candidate: {}", name, playingWebRtcEndpoint);
     this.playingWebRtcEndpoint = playingWebRtcEndpoint;
   }
 
